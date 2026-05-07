@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Professional</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .admin-section { display: none; }
+        .admin-section.active { display: block; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+
+    <div id="admin-panel" class="container mx-auto p-4 max-w-6xl">
+        <header class="bg-indigo-600 text-white p-4 rounded-lg shadow-md mb-6 flex justify-between items-center">
+            <h1 class="text-3xl font-bold">Admin Panel</h1>
+            <button id="sign-out-btn" class="hidden bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition">
+                <i class="fas fa-sign-out-alt mr-1"></i> Sign Out
+            </button>
+        </header>
+        
+        <div id="admin-login" class="bg-white p-8 rounded-lg shadow-md max-w-md mx-auto text-center mt-20">
+             <h2 class="text-2xl font-bold mb-6 text-gray-700">Admin Login</h2>
+             <button id="google-login-btn" class="bg-white border border-gray-300 text-gray-700 font-semibold py-3 px-6 rounded-lg shadow-sm hover:bg-gray-50 flex items-center justify-center w-full transition">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="Google icon" class="w-6 h-6 mr-3">
+                Sign in with Google
+             </button>
+        </div>
+
+        <div id="access-denied" class="hidden bg-red-100 text-red-700 px-4 py-3 rounded-lg text-center mb-4 max-w-md mx-auto shadow-sm">
+            <strong>Access Denied!</strong> You are not authorized.
+        </div>
+
+        <div id="admin-content" class="hidden flex flex-col md:flex-row gap-6">
+            
+            <aside class="w-full md:w-64 bg-white p-4 rounded-lg shadow-md h-fit">
+                <nav class="space-y-2">
+                    <button onclick="showSection('stats-section')" class="w-full text-left p-3 hover:bg-indigo-50 rounded-md font-semibold text-indigo-600"><i class="fas fa-chart-line mr-2"></i> Dashboard</button>
+                    <button onclick="showSection('general-settings')" class="w-full text-left p-3 hover:bg-indigo-50 rounded-md"><i class="fas fa-cog mr-2"></i> Settings & Ads</button>
+                    <button onclick="showSection('slider-management')" class="w-full text-left p-3 hover:bg-indigo-50 rounded-md"><i class="fas fa-images mr-2"></i> Manage Sliders</button>
+                    <button onclick="showSection('file-management')" class="w-full text-left p-3 hover:bg-indigo-50 rounded-md"><i class="fas fa-video mr-2"></i> Manage Files</button>
+                </nav>
+            </aside>
+
+            <div class="flex-1 space-y-6">
+                
+                <div id="stats-section" class="admin-section active grid grid-cols-2 gap-4">
+                    <div class="bg-blue-500 text-white p-6 rounded-lg shadow-md text-center">
+                        <h3 class="text-lg opacity-90">Total Files</h3>
+                        <p id="total-files-count" class="text-4xl font-bold mt-2">0</p>
+                    </div>
+                    <div class="bg-purple-500 text-white p-6 rounded-lg shadow-md text-center">
+                        <h3 class="text-lg opacity-90">Active Sliders</h3>
+                        <p id="total-sliders-count" class="text-4xl font-bold mt-2">0</p>
+                    </div>
+                </div>
+
+                <div id="general-settings" class="admin-section space-y-6">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-semibold mb-4 border-b pb-2 text-gray-800">General Settings</h2>
+                        <div class="mb-4">
+                            <label class="font-medium text-gray-700 block mb-1">Waiting Timer Duration (Seconds):</label>
+                            <input type="number" id="timer-duration-setting" class="w-full p-2 border rounded-md focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="e.g. 10">
+                        </div>
+                        <button id="save-settings-btn" class="w-full bg-indigo-500 text-white py-2 rounded hover:bg-indigo-600 font-bold transition">Save Settings</button>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-semibold mb-4 border-b pb-2 text-gray-800">Banner Ads (Adsterra)</h2>
+                        <div class="space-y-4">
+                            <textarea id="ad-slot-1" rows="3" placeholder="Ad Slot 1 (Header)" class="w-full p-2 border rounded-md font-mono text-xs"></textarea>
+                            <textarea id="ad-slot-2" rows="3" placeholder="Ad Slot 2 (Slider)" class="w-full p-2 border rounded-md font-mono text-xs"></textarea>
+                            <textarea id="ad-slot-3" rows="3" placeholder="Ad Slot 3 (Footer)" class="w-full p-2 border rounded-md font-mono text-xs"></textarea>
+                            <button id="save-ads-btn" class="bg-teal-500 text-white px-6 py-2 rounded hover:bg-teal-600 w-full font-bold transition">Save Ad Codes</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="slider-management" class="admin-section bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4 border-b pb-2 text-gray-800">Sliders</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input type="url" id="slider-image-url" placeholder="Slider Image URL" class="p-2 border rounded-md">
+                        <input type="url" id="slider-link-url" placeholder="Destination Link (Optional)" class="p-2 border rounded-md">
+                    </div>
+                    <button id="add-slider-btn" class="mt-4 w-full bg-green-500 text-white py-2 rounded hover:bg-green-600 font-bold transition">Add New Slider</button>
+                    <div id="slider-list" class="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4"></div>
+                </div>
+
+                <div id="file-management" class="admin-section bg-white p-6 rounded-lg shadow-md">
+                    <h2 class="text-2xl font-semibold mb-4 border-b pb-2 text-gray-800">Upload & Manage Files</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                        <input type="text" id="file-title" placeholder="Video Title" class="p-2 border rounded-md">
+                        <input type="number" id="file-ad-count" placeholder="Ads to Unlock" value="10" class="p-2 border rounded-md">
+                        <input type="url" id="file-thumbnail-url" placeholder="Thumbnail URL" class="p-2 border rounded-md md:col-span-2">
+                        
+                        <div id="thumb-preview" class="md:col-span-2 hidden bg-gray-50 p-3 rounded-lg text-center border-dashed border-2 border-gray-200">
+                            <p class="text-xs text-gray-500 mb-2 font-semibold">Live Thumbnail Preview:</p>
+                            <img id="preview-img" src="" class="h-40 mx-auto rounded-lg shadow-md">
+                        </div>
+
+                        <textarea id="file-description" placeholder="Description..." class="p-2 border rounded-md md:col-span-2 h-24"></textarea>
+                        <input type="url" id="file-download-url" placeholder="Direct Download URL" class="p-2 border rounded-md md:col-span-2">
+                    </div>
+                    <button id="add-file-btn" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 font-bold transition">Add Video File</button>
+                    <div id="file-list" class="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="edit-file-modal" class="hidden fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-6 rounded-xl w-full max-w-lg shadow-2xl">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">Edit File Details</h3>
+            <input type="hidden" id="edit-file-id">
+            <div class="space-y-3">
+                <input type="text" id="edit-file-title" class="w-full p-2 border rounded" placeholder="Title">
+                <input type="number" id="edit-file-ad-count" class="w-full p-2 border rounded" placeholder="Ads Count">
+                <input type="url" id="edit-file-thumbnail-url" class="w-full p-2 border rounded" placeholder="Thumb URL">
+                <textarea id="edit-file-description" class="w-full p-2 border rounded h-20" placeholder="Description"></textarea>
+                <input type="url" id="edit-file-download-url" class="w-full p-2 border rounded" placeholder="Download URL">
+                <div class="flex gap-2 pt-2">
+                    <button id="cancel-edit-btn" class="flex-1 bg-gray-200 text-gray-800 py-2 rounded font-semibold">Cancel</button>
+                    <button id="save-edit-btn" class="flex-1 bg-green-500 text-white py-2 rounded font-bold shadow-lg">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed bottom-5 right-5 bg-gray-900 text-white py-2 px-6 rounded-full shadow-2xl opacity-0 transition-opacity duration-300 z-[100]">
+        <p id="toast-message"></p>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, serverTimestamp, query, orderBy, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        const firebaseConfig = {
+  apiKey: "AIzaSyD-C4PcT664_V-Wb1GMJnWqN4PxvYc_5qg",
+  authDomain: "video-admin-site-telegram.firebaseapp.com",
+  projectId: "video-admin-site-telegram",
+  storageBucket: "video-admin-site-telegram.firebasestorage.app",
+  messagingSenderId: "174515557777",
+  appId: "1:174515557777:web:d924897ba0382b4ca33630",
+  measurementId: "G-ZK300LL7SY"
+};
+        
+        const authorizedAdmins = ['rajame331@gmail.com'];
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        const adminLogin = document.getElementById('admin-login');
+        const adminContent = document.getElementById('admin-content');
+        const fileList = document.getElementById('file-list');
+        const sliderList = document.getElementById('slider-list');
+        const editModal = document.getElementById('edit-file-modal');
+
+        onAuthStateChanged(auth, (user) => {
+            if (user && authorizedAdmins.includes(user.email)) {
+                adminLogin.classList.add('hidden');
+                document.getElementById('access-denied').classList.add('hidden');
+                adminContent.classList.remove('hidden');
+                document.getElementById('sign-out-btn').classList.remove('hidden');
+                loadAdminData();
+            } else {
+                adminLogin.classList.remove('hidden');
+                adminContent.classList.add('hidden');
+                document.getElementById('sign-out-btn').classList.add('hidden');
+                if (user) document.getElementById('access-denied').classList.remove('hidden');
+            }
+        });
+
+        document.getElementById('google-login-btn').addEventListener('click', () => signInWithPopup(auth, provider));
+        document.getElementById('sign-out-btn').addEventListener('click', () => signOut(auth));
+
+        // Navigation
+        window.showSection = function(sectionId) {
+            document.querySelectorAll('.admin-section').forEach(sec => sec.classList.remove('active'));
+            const target = document.getElementById(sectionId);
+            if(target) target.classList.add('active');
+        };
+
+        // Thumbnail Preview
+        document.getElementById('file-thumbnail-url').addEventListener('input', (e) => {
+            const url = e.target.value;
+            const previewDiv = document.getElementById('thumb-preview');
+            const img = document.getElementById('preview-img');
+            if (url) {
+                img.src = url; previewDiv.classList.remove('hidden');
+            } else {
+                previewDiv.classList.add('hidden');
+            }
+        });
+
+        // Stats Update
+        async function updateStats() {
+            try {
+                const filesSnap = await getDocs(collection(db, "files"));
+                const slidersSnap = await getDocs(collection(db, "sliders"));
+                document.getElementById('total-files-count').textContent = filesSnap.size;
+                document.getElementById('total-sliders-count').textContent = slidersSnap.size;
+            } catch (e) { console.error(e); }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-message').textContent = msg;
+            toast.classList.remove('opacity-0');
+            setTimeout(() => toast.classList.add('opacity-0'), 2500);
+        }
+
+        async function loadAdminData() {
+            await loadAdminSettings();
+            await loadAdminAds();
+            await loadAdminSliders();
+            await loadAdminFiles();
+            await updateStats();
+        }
+
+        // --- Settings Management ---
+        document.getElementById('save-settings-btn').addEventListener('click', async () => {
+            const duration = parseInt(document.getElementById('timer-duration-setting').value);
+            await setDoc(doc(db, "settings", "general"), { timerDuration: duration || 10 });
+            showToast("Settings Saved!");
+        });
+
+        async function loadAdminSettings() {
+            const docSnap = await getDoc(doc(db, "settings", "general"));
+            if (docSnap.exists()) {
+                document.getElementById('timer-duration-setting').value = docSnap.data().timerDuration;
+            }
+        }
+
+        // --- Ad Management ---
+        document.getElementById('save-ads-btn').addEventListener('click', async () => {
+            await setDoc(doc(db, "settings", "ads"), {
+                adSlot1: document.getElementById('ad-slot-1').value,
+                adSlot2: document.getElementById('ad-slot-2').value,
+                adSlot3: document.getElementById('ad-slot-3').value
+            });
+            showToast("Ad Codes Saved!");
+        });
+
+        async function loadAdminAds() {
+            const docSnap = await getDoc(doc(db, "settings", "ads"));
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                document.getElementById('ad-slot-1').value = data.adSlot1 || '';
+                document.getElementById('ad-slot-2').value = data.adSlot2 || '';
+                document.getElementById('ad-slot-3').value = data.adSlot3 || '';
+            }
+        }
+
+        // --- Slider Management ---
+        document.getElementById('add-slider-btn').addEventListener('click', async () => {
+            const imageUrl = document.getElementById('slider-image-url').value;
+            if (!imageUrl) return showToast("Image URL is required!");
+            await addDoc(collection(db, "sliders"), { 
+                imageUrl, 
+                linkUrl: document.getElementById('slider-link-url').value, 
+                createdAt: serverTimestamp() 
+            });
+            document.getElementById('slider-image-url').value = '';
+            document.getElementById('slider-link-url').value = '';
+            loadAdminSliders(); updateStats(); showToast("Slider Added!");
+        });
+
+        async function loadAdminSliders() {
+            const querySnapshot = await getDocs(query(collection(db, "sliders"), orderBy("createdAt", "desc")));
+            sliderList.innerHTML = '';
+            querySnapshot.forEach((docSnap) => {
+                const slider = docSnap.data();
+                const el = document.createElement('div');
+                el.className = 'relative border rounded shadow-sm overflow-hidden bg-white group';
+                el.innerHTML = `<img src="${slider.imageUrl}" class="w-full h-24 object-cover">
+                <button onclick="deleteSlider('${docSnap.id}')" class="absolute top-1 right-1 bg-red-600 text-white rounded-full w-6 h-6 text-sm opacity-0 group-hover:opacity-100 transition">&times;</button>`;
+                sliderList.appendChild(el);
+            });
+        }
+
+        window.deleteSlider = async (id) => {
+            if(confirm("Are you sure?")) { await deleteDoc(doc(db, "sliders", id)); loadAdminSliders(); updateStats(); }
+        }
+
+        // --- File Management ---
+        document.getElementById('add-file-btn').addEventListener('click', async () => {
+            const fileData = {
+                title: document.getElementById('file-title').value,
+                requiredAds: parseInt(document.getElementById('file-ad-count').value) || 10,
+                thumbnailUrl: document.getElementById('file-thumbnail-url').value,
+                description: document.getElementById('file-description').value,
+                downloadUrl: document.getElementById('file-download-url').value,
+                createdAt: serverTimestamp()
+            };
+            if(!fileData.title || !fileData.thumbnailUrl) return showToast("Title & Thumb required!");
+            await addDoc(collection(db, "files"), fileData);
+            showToast("Video Added!");
+            ['file-title', 'file-thumbnail-url', 'file-description', 'file-download-url'].forEach(id => document.getElementById(id).value = '');
+            document.getElementById('thumb-preview').classList.add('hidden');
+            loadAdminFiles(); updateStats();
+        });
+
+        async function loadAdminFiles() {
+            const querySnapshot = await getDocs(query(collection(db, "files"), orderBy("createdAt", "desc")));
+            fileList.innerHTML = '';
+            querySnapshot.forEach((docSnap) => {
+                const file = docSnap.data();
+                const el = document.createElement('div');
+                el.className = 'bg-white p-3 rounded-lg shadow-md border';
+                el.innerHTML = `<img src="${file.thumbnailUrl}" class="w-full h-32 object-cover rounded-md mb-2">
+                <h4 class="font-bold text-gray-800 truncate">${file.title}</h4>
+                <p class="text-xs text-gray-500 mb-2">Ads: ${file.requiredAds}</p>
+                <div class="flex gap-2">
+                    <button onclick="editFile('${docSnap.id}')" class="flex-1 bg-yellow-500 text-white text-xs py-2 rounded font-bold">Edit</button>
+                    <button onclick="deleteFile('${docSnap.id}')" class="flex-1 bg-red-500 text-white text-xs py-2 rounded font-bold">Delete</button>
+                </div>`;
+                fileList.appendChild(el);
+            });
+        }
+
+        window.deleteFile = async (id) => {
+            if(confirm("Delete this video?")) { await deleteDoc(doc(db, "files", id)); loadAdminFiles(); updateStats(); }
+        }
+
+        window.editFile = async (id) => {
+            const docSnap = await getDoc(doc(db, "files", id));
+            const data = docSnap.data();
+            document.getElementById('edit-file-id').value = id;
+            document.getElementById('edit-file-title').value = data.title;
+            document.getElementById('edit-file-ad-count').value = data.requiredAds;
+            document.getElementById('edit-file-thumbnail-url').value = data.thumbnailUrl;
+            document.getElementById('edit-file-description').value = data.description;
+            document.getElementById('edit-file-download-url').value = data.downloadUrl;
+            editModal.classList.remove('hidden');
+        }
+
+        document.getElementById('cancel-edit-btn').addEventListener('click', () => editModal.classList.add('hidden'));
+        document.getElementById('save-edit-btn').addEventListener('click', async () => {
+            const id = document.getElementById('edit-file-id').value;
+            await updateDoc(doc(db, "files", id), {
+                title: document.getElementById('edit-file-title').value,
+                requiredAds: parseInt(document.getElementById('edit-file-ad-count').value),
+                thumbnailUrl: document.getElementById('edit-file-thumbnail-url').value,
+                description: document.getElementById('edit-file-description').value,
+                downloadUrl: document.getElementById('edit-file-download-url').value
+            });
+            editModal.classList.add('hidden');
+            loadAdminFiles(); showToast("Updated!");
+        });
+
+    </script>
+</body>
+  </html>
